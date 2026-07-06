@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Matcher</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="glass-panel">
+        <div class="logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            <h1>Color Matcher</h1>
+        </div>
+        <div class="controls">
+            <div class="control-group">
+                <label for="radius">Eyedropper Radius:</label>
+                <select id="radius">
+                    <option value="1">1x1</option>
+                    <option value="3" selected>3x3</option>
+                    <option value="5">5x5</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="method">Method:</label>
+                <select id="method">
+                    <option value="lab">LAB Shift (Recommended)</option>
+                    <option value="rgb">RGB Scale</option>
+                </select>
+            </div>
+            <div class="control-group slider-group">
+                <label for="intensity">Intensity:</label>
+                <div class="slider-wrapper">
+                    <input type="range" id="intensity" min="0" max="100" value="100">
+                    <span id="intensity-val">100%</span>
+                </div>
+            </div>
+            <button id="download-btn" disabled>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                Save
+            </button>
+        </div>
+    </header>
+
+    <main class="workspace">
+        <!-- Reference Image Zone -->
+        <div class="image-zone" id="zone-ref">
+            <div class="zone-header">
+                <div class="title-wrapper">
+                    <span class="badge badge-ref">1</span>
+                    <h2>Reference Image</h2>
+                </div>
+                <div class="color-picker-info">
+                    <div class="color-swatch checkerboard"><div class="color-fill" id="swatch-ref"></div></div>
+                    <span id="color-hex-ref">Click to pick color</span>
+                </div>
+            </div>
+            <div class="canvas-container glass-panel" id="container-ref">
+                <div class="upload-prompt" id="upload-prompt-ref">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    <p>Drag & drop photo here or click</p>
+                    <input type="file" id="file-ref" accept="image/*" class="file-input">
+                </div>
+                <canvas id="canvas-ref" class="hidden"></canvas>
+                <div class="magnifier hidden" id="mag-ref">
+                    <canvas id="mag-canvas-ref" width="80" height="80"></canvas>
+                    <div class="crosshair"></div>
+                </div>
+            </div>
+            <div class="zone-footer hidden" id="footer-ref">
+                <button class="replace-btn" id="replace-ref">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.59-9.21l5.25 5.25"/></svg>
+                    Replace Image
+                </button>
+                <input type="file" id="replace-file-ref" accept="image/*" class="hidden">
+            </div>
+        </div>
+
+        <!-- Target Image Zone -->
+        <div class="image-zone" id="zone-tgt">
+            <div class="zone-header">
+                <div class="title-wrapper">
+                    <span class="badge badge-tgt">2</span>
+                    <h2>Target Image</h2>
+                </div>
+                <div class="color-picker-info">
+                    <div class="color-swatch checkerboard"><div class="color-fill" id="swatch-tgt"></div></div>
+                    <span id="color-hex-tgt">Click to pick color</span>
+                </div>
+            </div>
+            <div class="canvas-container glass-panel" id="container-tgt">
+                <div class="upload-prompt" id="upload-prompt-tgt">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    <p>Drag & drop photo here or click</p>
+                    <input type="file" id="file-tgt" accept="image/*" class="file-input">
+                </div>
+                <canvas id="canvas-tgt" class="hidden"></canvas>
+                <div class="magnifier hidden" id="mag-tgt">
+                    <canvas id="mag-canvas-tgt" width="80" height="80"></canvas>
+                    <div class="crosshair"></div>
+                </div>
+            </div>
+            <div class="zone-footer hidden" id="footer-tgt">
+                <button class="replace-btn" id="replace-tgt">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.59-9.21l5.25 5.25"/></svg>
+                    Replace Image
+                </button>
+                <input type="file" id="replace-file-tgt" accept="image/*" class="hidden">
+            </div>
+        </div>
+    </main>
+
+    <!-- Overlay Loader -->
+    <div id="loader" class="hidden">
+        <div class="spinner"></div>
+        <p>Processing image...</p>
+    </div>
+
+    <script src="color-math.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
